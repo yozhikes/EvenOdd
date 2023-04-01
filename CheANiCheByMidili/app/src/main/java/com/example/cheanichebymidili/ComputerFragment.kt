@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import android.widget.RadioButton
 import android.widget.RadioGroup
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.LifecycleOwner
 import com.example.cheanichebymidili.databinding.FragmentComputerBinding
 import kotlin.random.Random
 
@@ -15,12 +16,7 @@ import kotlin.random.Random
 class ComputerFragment : Fragment() {
     lateinit var bind:FragmentComputerBinding
     private val dataModel: DataModel by activityViewModels()
-
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-    }
-
+    var countComp=0
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -31,49 +27,55 @@ class ComputerFragment : Fragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        bind.first2Txt.text=Random.nextInt(1,7).toString()
-        bind.second2Txt.text=Random.nextInt(1,7).toString()
-        bind.third2Txt.text=Random.nextInt(1,7).toString()
-        bind.Sum2Txt.text=(bind.first2Txt.text.toString().toInt()+
-                bind.second2Txt.text.toString().toInt()+
-                bind.third2Txt.text.toString().toInt()).toString()
-        when(Random.nextInt(1,3)){
-            1->{
-                dataModel.otvForComputerFragment.value=bind.radioButton1.text.toString()
-                bind.radioButton1.isChecked=true
-                bind.radioButton2.isChecked=false
-                if (bind.Sum2Txt.text.toString().toInt()%2==0){
-                    dataModel.otvForComputerFragment.value="1"
+        dataModel.startCheck.observe(activity as LifecycleOwner) {
+            if (it == true) {
+                bind.first2Txt.text = Random.nextInt(1, 7).toString()
+                bind.second2Txt.text = Random.nextInt(1, 7).toString()
+                bind.third2Txt.text = Random.nextInt(1, 7).toString()
+                bind.Sum2Txt.text = (bind.first2Txt.text.toString().toInt() +
+                        bind.second2Txt.text.toString().toInt() +
+                        bind.third2Txt.text.toString().toInt()).toString()
+                when ((1..2).random()) {
+                    1 -> {
+                        bind.chetComputer.isEnabled=true
+                        bind.chetComputer.isChecked = true
+                        bind.chetComputer.isEnabled=false
+                        if (bind.Sum2Txt.text.toString().toInt() % 2 == 0) {
+                            countComp = 1
+                            bind.pickComp.setImageResource(R.drawable.galka)
+                        }
+                        else {
+                            countComp = 0
+                            bind.pickComp.setImageResource(R.drawable.krest)
+                        }
+                    }
+                    2 -> {
+                        bind.nechetComputer.isEnabled=true
+                        bind.nechetComputer.isChecked = true
+                        bind.nechetComputer.isEnabled=false
+                        if (bind.Sum2Txt.text.toString().toInt() % 2 != 0) {
+                            countComp = 1
+                            bind.pickComp.setImageResource(R.drawable.galka)
+                        }
+                        else {
+                            countComp = 0
+                            bind.pickComp.setImageResource(R.drawable.krest)
+                        }
+                    }
                 }
-                else{
-                    dataModel.otvForComputerFragment.value="0"
-                }
+                bind.schComp2.text=(bind.schComp2.text.toString().toInt()+countComp).toString()
             }
-
-            2->{
-                dataModel.otvForComputerFragment.value=bind.radioButton2.text.toString()
-                bind.radioButton2.isChecked=true
-                bind.radioButton1.isChecked=false
-                if (bind.Sum2Txt.text.toString().toInt()%2!=0){
-                    dataModel.otvForComputerFragment.value="1"
-                }
-                else{
-                    dataModel.otvForComputerFragment.value="0"
-                }
+            else {
+                bind.first2Txt.text = "0"
+                bind.second2Txt.text = "0"
+                bind.third2Txt.text = "0"
+                bind.Sum2Txt.text = "0"
+                bind.pickComp.setImageResource(0)
             }
         }
     }
 
     companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment ComputerFragment.
-         */
-        // TODO: Rename and change types and number of parameters
         @JvmStatic
         fun newInstance() = ComputerFragment()
     }

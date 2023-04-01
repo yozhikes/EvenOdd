@@ -17,6 +17,8 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         bind= ActivityMainBinding.inflate(layoutInflater)
         setContentView(bind.root)
+        bind.startBtn.isEnabled=false
+        dataModel.startCheck.value=false
         supportFragmentManager
             .beginTransaction()
             .replace(R.id.frameComputer,ComputerFragment.newInstance())
@@ -25,15 +27,18 @@ class MainActivity : AppCompatActivity() {
             .beginTransaction()
             .replace(R.id.frameUser,UserFragment.newInstance())
             .commit()
+        dataModel.otvForUserFragment.observe(this,{
+            bind.startBtn.isEnabled=it
+        })
     }
     fun StartClick(view:View){
-        if(dataModel.otvForUserFragment.value=="1"){
-            schUser++
-            bind.schUser.text=schUser.toString()
+        if(bind.startBtn.text == "Start") {
+            dataModel.startCheck.value = true
+            bind.startBtn.text = "Next"
         }
-        if(dataModel.otvForComputerFragment.value=="1"){
-            schComp++
-            bind.schComp.text=schComp.toString()
+        else{
+            dataModel.startCheck.value = false
+            bind.startBtn.text = "Start"
         }
     }
     fun ExitClick(view:View){
